@@ -8,6 +8,7 @@ import os
 import re
 import psutil
 import optparse
+import multiprocessing
 
 kB = 1024
 MB = 1048576
@@ -76,9 +77,8 @@ def get_mem():
 def get_cpu():
     cpu_quota = int(get_cgroup_resources("/sys/fs/cgroup/cpu,cpuacct/cpu.cfs_quota_us"))
     cpu_period = int(get_cgroup_resources("/sys/fs/cgroup/cpu,cpuacct/cpu.cfs_period_us"))
-    if cpu_quota == -1:
-      cpus = get_cgroup_resources("/sys/fs/cgroup/cpuset/cpuset.cpus")
-      cpu = int(cpus.replace("0-","")) + 1
+    if cpu_quota == -1:      
+      cpu = multiprocessing.cpu_count()
     else:
       cpu = int(cpu_quota / cpu_period)
     return cpu
